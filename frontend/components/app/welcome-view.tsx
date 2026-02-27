@@ -1,9 +1,13 @@
 'use client';
 
+import { useState } from 'react';
+import { InsightsView } from '@/components/app/insights-view';
 import { ReflectionLibrary } from '@/components/app/reflection-library';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/useAuth';
 import { useReflections } from '@/hooks/useReflections';
+
+type Tab = 'reflections' | 'insights';
 
 interface WelcomeViewProps {
   startButtonText: string;
@@ -17,6 +21,7 @@ export const WelcomeView = ({
 }: React.ComponentProps<'div'> & WelcomeViewProps) => {
   const { user, logout } = useAuth();
   const { reflections, loading, tagFilter, filterByTag } = useReflections();
+  const [activeTab, setActiveTab] = useState<Tab>('reflections');
 
   return (
     <div ref={ref} className="bg-background min-h-svh">
@@ -47,15 +52,34 @@ export const WelcomeView = ({
           )}
         </section>
 
-        {/* Reflection library */}
+        {/* Tab switcher + content */}
         <section>
-          <h2 className="text-foreground mb-4 text-lg font-medium">Past reflections</h2>
-          <ReflectionLibrary
-            reflections={reflections}
-            loading={loading}
-            tagFilter={tagFilter}
-            onFilterByTag={filterByTag}
-          />
+          <div className="mb-8 flex gap-8 border-b border-border">
+            {(['reflections', 'insights'] as Tab[]).map((tab) => (
+              <button
+                key={tab}
+                onClick={() => setActiveTab(tab)}
+                className={`pb-3 text-sm capitalize transition-colors ${
+                  activeTab === tab
+                    ? 'text-foreground border-b-2 border-foreground -mb-px'
+                    : 'text-muted-foreground hover:text-foreground'
+                }`}
+              >
+                {tab}
+              </button>
+            ))}
+          </div>
+
+          {activeTab === 'reflections' ? (
+            <ReflectionLibrary
+              reflections={reflections}
+              loading={loading}
+              tagFilter={tagFilter}
+              onFilterByTag={filterByTag}
+            />
+          ) : (
+            <InsightsView reflections={reflections} loading={loading} />
+          )}
         </section>
       </div>
     </div>
