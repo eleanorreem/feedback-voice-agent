@@ -62,7 +62,7 @@ export function AuthForm({ mode }: AuthFormProps) {
           required
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="border-border bg-background text-foreground focus:ring-primary w-full rounded-md border px-3 py-2 text-sm focus:ring-2 focus:outline-none"
+          className="border-input bg-background text-foreground focus:ring-ring w-full rounded-lg border px-3 py-2 text-sm focus:ring-2 focus:outline-none"
           placeholder="you@example.com"
         />
       </div>
@@ -78,7 +78,7 @@ export function AuthForm({ mode }: AuthFormProps) {
           minLength={8}
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          className="border-border bg-background text-foreground focus:ring-primary w-full rounded-md border px-3 py-2 text-sm focus:ring-2 focus:outline-none"
+          className="border-input bg-background text-foreground focus:ring-ring w-full rounded-lg border px-3 py-2 text-sm focus:ring-2 focus:outline-none"
           placeholder="At least 8 characters"
         />
       </div>
@@ -98,7 +98,7 @@ export function AuthForm({ mode }: AuthFormProps) {
             minLength={8}
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
-            className="border-border bg-background text-foreground focus:ring-primary w-full rounded-md border px-3 py-2 text-sm focus:ring-2 focus:outline-none"
+            className="border-input bg-background text-foreground focus:ring-ring w-full rounded-lg border px-3 py-2 text-sm focus:ring-2 focus:outline-none"
             placeholder="Confirm your password"
           />
         </div>
@@ -106,11 +106,7 @@ export function AuthForm({ mode }: AuthFormProps) {
 
       {error && <p className="text-sm text-red-500">{error}</p>}
 
-      <Button
-        type="submit"
-        disabled={loading}
-        className="w-full rounded-full font-mono text-xs font-bold tracking-wider uppercase"
-      >
+      <Button type="submit" disabled={loading} className="w-full rounded-full text-sm font-medium">
         {loading ? 'Please wait...' : mode === 'login' ? 'Log in' : 'Create account'}
       </Button>
     </form>

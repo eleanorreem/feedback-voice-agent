@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useRef, useState } from 'react';
-import { motion } from 'motion/react';
+import { AnimatePresence, motion } from 'motion/react';
 import { useSessionContext, useSessionMessages } from '@livekit/components-react';
 import type { AppConfig } from '@/app-config';
 import {
@@ -71,7 +71,7 @@ function SessionTimer() {
   const remainingSec = remaining % 60;
 
   return (
-    <div className="text-muted-foreground pointer-events-none fixed top-4 right-4 z-50 font-mono text-xs md:top-6 md:right-6">
+    <div className="text-muted-foreground/70 pointer-events-none fixed top-4 right-4 z-50 text-xs tabular-nums md:top-6 md:right-6">
       <span>
         {minutes}:{seconds.toString().padStart(2, '0')} / 10:00
       </span>
@@ -96,6 +96,10 @@ export const SessionView = ({
   const session = useSessionContext();
   const { messages } = useSessionMessages(session);
   const [chatOpen, setChatOpen] = useState(false);
+  const [questionProgress, setQuestionProgress] = useState<{
+    current: number;
+    total: number;
+  } | null>(null);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
 
   const controls: AgentControlBarControls = {
@@ -105,6 +109,27 @@ export const SessionView = ({
     camera: false,
     screenShare: false,
   };
+
+  // Listen for question progress data messages from the agent
+  useEffect(() => {
+    if (!session.room) return;
+
+    const handleData = (payload: Uint8Array) => {
+      try {
+        const message = JSON.parse(new TextDecoder().decode(payload));
+        if (message.type === 'question_progress') {
+          setQuestionProgress({ current: message.current, total: message.total });
+        }
+      } catch {
+        // ignore non-JSON messages
+      }
+    };
+
+    session.room.on('dataReceived', handleData);
+    return () => {
+      session.room?.off('dataReceived', handleData);
+    };
+  }, [session, session.room]);
 
   useEffect(() => {
     const lastMessage = messages.at(-1);
@@ -118,6 +143,23 @@ export const SessionView = ({
   return (
     <section className="bg-background relative z-10 h-svh w-svw overflow-hidden" {...props}>
       <SessionTimer />
+      {/* Question progress */}
+      <div className="pointer-events-none fixed inset-x-0 top-4 z-50 flex justify-center md:top-6">
+        <AnimatePresence mode="wait">
+          {questionProgress && (
+            <motion.span
+              key={questionProgress.current}
+              initial={{ opacity: 0, y: -4 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 4 }}
+              transition={{ duration: 0.3 }}
+              className="text-muted-foreground text-xs"
+            >
+              Question {questionProgress.current} of {questionProgress.total}
+            </motion.span>
+          )}
+        </AnimatePresence>
+      </div>
       <Fade top className="absolute inset-x-4 top-0 z-10 h-40" />
       {/* transcript */}
       <ChatTranscript

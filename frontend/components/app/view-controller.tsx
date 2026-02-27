@@ -182,7 +182,7 @@ export function ViewController({ appConfig }: ViewControllerProps) {
           className="flex min-h-svh items-center justify-center"
         >
           <div className="text-center">
-            <div className="border-muted border-t-foreground mx-auto mb-6 h-10 w-10 animate-spin rounded-full border-4" />
+            <div className="border-primary/30 border-t-primary mx-auto mb-6 h-10 w-10 animate-spin rounded-full border-4" />
             <p className="text-foreground text-lg font-medium">Creating your summary...</p>
             <p className="text-muted-foreground mt-2 text-sm">This usually takes a few seconds</p>
           </div>

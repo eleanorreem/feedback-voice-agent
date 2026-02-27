@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import type { SummaryData } from '@/components/app/view-controller';
 import { Button } from '@/components/ui/button';
+import { PREDEFINED_TAGS, getTagStyle } from '@/lib/tags';
 
 interface SummaryEditorProps {
   summary: SummaryData;
@@ -15,20 +16,11 @@ export function SummaryEditor({ summary, onSave, onDiscard }: SummaryEditorProps
   const [mood, setMood] = useState(summary.mood ?? '');
   const [actions, setActions] = useState(summary.actions ?? '');
   const [tags, setTags] = useState<string[]>(summary.tags ?? []);
-  const [newTag, setNewTag] = useState('');
   const [saving, setSaving] = useState(false);
   const [showDiscard, setShowDiscard] = useState(false);
 
-  const handleAddTag = () => {
-    const tag = newTag.trim().toLowerCase().replace(/^#/, '');
-    if (tag && !tags.includes(tag)) {
-      setTags([...tags, tag]);
-    }
-    setNewTag('');
-  };
-
-  const handleRemoveTag = (tagToRemove: string) => {
-    setTags(tags.filter((t) => t !== tagToRemove));
+  const toggleTag = (tag: string) => {
+    setTags((prev) => (prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag]));
   };
 
   const handleSave = async () => {
@@ -80,7 +72,7 @@ export function SummaryEditor({ summary, onSave, onDiscard }: SummaryEditorProps
               value={summaryText}
               onChange={(e) => setSummaryText(e.target.value)}
               rows={6}
-              className="border-border bg-background text-foreground focus:ring-primary w-full rounded-md border px-3 py-2 text-sm leading-relaxed focus:ring-2 focus:outline-none"
+              className="border-input bg-background text-foreground focus:ring-ring w-full rounded-lg border px-3 py-2 text-sm leading-relaxed focus:ring-2 focus:outline-none"
             />
           </div>
 
@@ -94,7 +86,7 @@ export function SummaryEditor({ summary, onSave, onDiscard }: SummaryEditorProps
                 {summary.themes.map((theme) => (
                   <span
                     key={theme}
-                    className="bg-muted text-muted-foreground rounded-full px-3 py-1 text-xs"
+                    className="bg-secondary text-secondary-foreground rounded-full px-3 py-1 text-xs"
                   >
                     {theme}
                   </span>
@@ -112,7 +104,7 @@ export function SummaryEditor({ summary, onSave, onDiscard }: SummaryEditorProps
               type="text"
               value={mood}
               onChange={(e) => setMood(e.target.value)}
-              className="border-border bg-background text-foreground focus:ring-primary w-full rounded-md border px-3 py-2 text-sm focus:ring-2 focus:outline-none"
+              className="border-input bg-background text-foreground focus:ring-ring w-full rounded-lg border px-3 py-2 text-sm focus:ring-2 focus:outline-none"
               placeholder="e.g. reflective, hopeful, tired"
             />
           </div>
@@ -126,7 +118,7 @@ export function SummaryEditor({ summary, onSave, onDiscard }: SummaryEditorProps
               value={actions}
               onChange={(e) => setActions(e.target.value)}
               rows={2}
-              className="border-border bg-background text-foreground focus:ring-primary w-full rounded-md border px-3 py-2 text-sm leading-relaxed focus:ring-2 focus:outline-none"
+              className="border-input bg-background text-foreground focus:ring-ring w-full rounded-lg border px-3 py-2 text-sm leading-relaxed focus:ring-2 focus:outline-none"
               placeholder="Any intentions or next steps you mentioned (optional)"
             />
           </div>
@@ -143,45 +135,27 @@ export function SummaryEditor({ summary, onSave, onDiscard }: SummaryEditorProps
             </div>
           )}
 
-          {/* Tags */}
+          {/* Tags — predefined picker */}
           <div>
             <label className="text-foreground mb-2 block text-xs font-semibold tracking-wide uppercase">
               Tags
             </label>
-            <div className="mb-2 flex flex-wrap gap-1.5">
-              {tags.map((tag) => (
-                <span
+            <div className="flex flex-wrap gap-1.5">
+              {PREDEFINED_TAGS.map((tag) => (
+                <button
                   key={tag}
-                  className="bg-primary/10 text-primary inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs"
+                  type="button"
+                  onClick={() => toggleTag(tag)}
+                  style={tags.includes(tag) ? undefined : getTagStyle(tag)}
+                  className={`rounded-full px-2.5 py-1 text-xs font-medium transition-colors ${
+                    tags.includes(tag)
+                      ? 'bg-primary text-primary-foreground'
+                      : 'opacity-60 hover:opacity-100'
+                  }`}
                 >
                   #{tag}
-                  <button
-                    onClick={() => handleRemoveTag(tag)}
-                    className="hover:text-destructive ml-0.5 text-xs"
-                    aria-label={`Remove tag ${tag}`}
-                  >
-                    &times;
-                  </button>
-                </span>
+                </button>
               ))}
-            </div>
-            <div className="flex gap-2">
-              <input
-                type="text"
-                value={newTag}
-                onChange={(e) => setNewTag(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') {
-                    e.preventDefault();
-                    handleAddTag();
-                  }
-                }}
-                className="border-border bg-background text-foreground focus:ring-primary flex-1 rounded-md border px-3 py-1.5 text-sm focus:ring-2 focus:outline-none"
-                placeholder="Add a tag..."
-              />
-              <Button variant="outline" size="sm" onClick={handleAddTag} disabled={!newTag.trim()}>
-                Add
-              </Button>
             </div>
           </div>
 
@@ -190,14 +164,14 @@ export function SummaryEditor({ summary, onSave, onDiscard }: SummaryEditorProps
             <Button
               onClick={handleSave}
               disabled={saving}
-              className="flex-1 rounded-full font-mono text-xs font-bold tracking-wider uppercase"
+              className="flex-1 rounded-full text-sm font-medium"
             >
               {saving ? 'Saving...' : 'Save reflection'}
             </Button>
             <Button
               variant="outline"
               onClick={() => setShowDiscard(true)}
-              className="rounded-full font-mono text-xs font-bold tracking-wider uppercase"
+              className="rounded-full text-sm font-medium"
             >
               Discard
             </Button>
@@ -205,7 +179,7 @@ export function SummaryEditor({ summary, onSave, onDiscard }: SummaryEditorProps
 
           {/* Discard confirmation */}
           {showDiscard && (
-            <div className="bg-muted/50 rounded-md p-4 text-center">
+            <div className="bg-secondary rounded-lg p-4 text-center">
               <p className="text-foreground mb-3 text-sm">
                 Are you sure you want to discard this reflection?
               </p>

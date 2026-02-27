@@ -1,3 +1,5 @@
+import json
+
 OPENING_QUESTIONS = [
     "What's been on your mind lately?",
     "What surprised you recently?",
@@ -26,17 +28,50 @@ CRISIS_RESOURCES = (
     "Would you like to pause here, or is there something else you'd like to reflect on today?"
 )
 
-SUMMARY_GENERATION_PROMPT = """You are generating a reflective journal summary from a voice conversation transcript.
+PREDEFINED_TAGS = [
+    "anxiety",
+    "grief",
+    "joy",
+    "anger",
+    "hope",
+    "overwhelm",
+    "loneliness",
+    "peace",
+    "work",
+    "family",
+    "relationships",
+    "health",
+    "identity",
+    "creativity",
+    "finances",
+    "home",
+    "boundaries",
+    "rest",
+    "self-compassion",
+    "healing",
+    "growth",
+    "community",
+    "justice",
+    "belonging",
+    "safety",
+    "independence",
+    "change",
+    "gratitude",
+    "resilience",
+    "letting-go",
+]
+
+SUMMARY_GENERATION_PROMPT = f"""You are generating a reflective journal entry from a voice conversation transcript.
 
 Produce a JSON object with these fields:
-- "summary_text": A warm, second-person narrative (2-3 short paragraphs) of what the user shared. Use "you" to address them. Be specific about what they said without adding interpretation.
+- "summary_text": Write in the second person ("you"), staying as close to the user's own words and phrasing as possible. Capture what they actually said — do not summarise, interpret, reframe, or add meaning. Use their language, not yours. If they said something in a particular way, preserve that. Think of this as a faithful written record of what was spoken, not a summary. 2-3 short paragraphs.
 - "themes": An array of 2-4 key themes discussed (short phrases like "work stress", "self-compassion", "family dynamics").
-- "mood": A single word or short phrase describing the overall emotional tone the user expressed or confirmed (e.g., "reflective", "frustrated", "hopeful but tired").
+- "mood": A single word or short phrase describing the overall emotional tone the user expressed (e.g., "reflective", "frustrated", "hopeful but tired").
 - "actions": Any specific intentions, commitments, or next steps the user mentioned. Set to null if none were stated.
-- "mirror_reflection": A brief compassionate observation (2-3 sentences) about language patterns, contradictions, or insights from the conversation. This should be genuinely insightful, not generic. Examples: noting repeated use of "should", observing they described events but not feelings, connecting themes across what they shared.
-- "tags": An array of 3-5 lowercase hashtag-style tags without the # symbol (e.g., ["work", "boundaries", "grief", "creativity"]).
+- "mirror_reflection": A brief compassionate observation (2-3 sentences) about language patterns, contradictions, or insights from the conversation. This is the ONLY place for reflection or interpretation. Be genuinely insightful, not generic. Examples: noting repeated use of "should", observing they described events but not feelings, connecting themes across what they shared.
+- "tags": Select 2-5 tags from ONLY this predefined list: {json.dumps(PREDEFINED_TAGS)}. Do NOT invent new tags. Choose the tags that best represent the session's themes.
 
-Be specific and grounded in what was actually said. Do not invent content. If the conversation was brief, keep the summary proportionally brief.
+Be specific and grounded in what was actually said. Do not invent content. If the conversation was brief, keep the entry proportionally brief.
 
 Return ONLY valid JSON, no other text."""
 

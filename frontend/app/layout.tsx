@@ -73,13 +73,11 @@ export default async function RootLayout({ children }: RootLayoutProps) {
           disableTransitionOnChange
         >
           <header className="fixed top-0 left-0 z-50 flex w-full flex-row items-center justify-between p-4 md:p-6">
-            <Link
-              href="/"
-              className="text-foreground font-mono text-sm font-bold tracking-wider uppercase"
-            >
+            <Link href="/" className="text-foreground text-sm font-semibold tracking-wide">
               {companyName}
             </Link>
             <nav className="flex items-center gap-4">
+              <ThemeToggle />
               <Link
                 href="/settings"
                 className="text-muted-foreground hover:text-foreground text-xs font-medium transition-colors"
@@ -90,9 +88,6 @@ export default async function RootLayout({ children }: RootLayoutProps) {
           </header>
 
           {children}
-          <div className="group fixed bottom-0 left-1/2 z-50 mb-2 -translate-x-1/2">
-            <ThemeToggle className="translate-y-20 transition-transform delay-150 duration-300 group-hover:translate-y-0" />
-          </div>
         </ThemeProvider>
       </body>
     </html>

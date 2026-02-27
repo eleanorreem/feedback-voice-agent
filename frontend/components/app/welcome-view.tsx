@@ -37,7 +37,7 @@ export const WelcomeView = ({
           <Button
             size="lg"
             onClick={onStartCall}
-            className="mt-6 w-64 rounded-full font-mono text-xs font-bold tracking-wider uppercase"
+            className="mt-6 w-64 rounded-full text-sm font-medium"
           >
             {startButtonText}
           </Button>

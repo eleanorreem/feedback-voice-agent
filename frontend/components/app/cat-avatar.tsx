@@ -12,7 +12,7 @@ import { cn } from '@/lib/shadcn/utils';
 
 function useBlink() {
   const [isBlinking, setIsBlinking] = useState(false);
-  const timeoutRef = useRef<ReturnType<typeof setTimeout>>();
+  const timeoutRef = useRef<ReturnType<typeof setTimeout>>(undefined);
 
   const scheduleBlink = useCallback(() => {
     const delay = 2000 + Math.random() * 4000;
@@ -93,11 +93,7 @@ export function CatAvatar({ state, audioTrack, className }: CatAvatarProps) {
           }}
           style={{ transformOrigin: '28px 28px' }}
         />
-        <polygon
-          points="22,27 26,14 35,26"
-          fill="#FFB6C1"
-          opacity="0.6"
-        />
+        <polygon points="22,27 26,14 35,26" fill="#FFB6C1" opacity="0.6" />
 
         {/* Right ear */}
         <motion.polygon
@@ -115,11 +111,7 @@ export function CatAvatar({ state, audioTrack, className }: CatAvatarProps) {
           }}
           style={{ transformOrigin: '72px 28px' }}
         />
-        <polygon
-          points="65,27 74,14 79,26"
-          fill="#FFB6C1"
-          opacity="0.6"
-        />
+        <polygon points="65,27 74,14 79,26" fill="#FFB6C1" opacity="0.6" />
 
         {/* Face */}
         <ellipse
