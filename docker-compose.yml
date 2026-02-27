@@ -1,0 +1,15 @@
+services:
+  postgres:
+    image: postgres:16
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_DB: reflective_journal
+      POSTGRES_USER: journal_user
+      POSTGRES_PASSWORD: journal_pass
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./database/migrations:/docker-entrypoint-initdb.d
+
+volumes:
+  pgdata:
